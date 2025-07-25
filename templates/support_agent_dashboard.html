@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Support Agent Dashboard</title>
+    <link rel="stylesheet" href="/static/support_agent_dashboard.css" />
+</head>
+<body>
+    <div class="container">
+        <h2>Support Agent Dashboard</h2>
+        <a href="/logout" style="float: right; margin-bottom: 10px;">Logout</a>
+        <section id="ticket-list">
+            <h3>All Tickets</h3>
+            <div id="tickets"></div>
+        </section>
+    </div>
+
+    <script>
+        async function fetchTickets() {
+            const response = await fetch('/tickets/get_tickets', {
+                credentials: 'include',
+            });
+            const tickets = await response.json();
+            const ticketsList = document.getElementById('tickets');
+            ticketsList.innerHTML = '';
+            tickets.forEach(ticket => {
+                const ticketDiv = document.createElement('div');
+                ticketDiv.className = 'ticket';
+                ticketDiv.innerHTML = `
+                    <strong>${ticket.subject}</strong> - Status: 
+                    <select class="status-select" data-ticket-id="${ticket.id}">
+                        <option value="open" ${ticket.status === 'open' ? 'selected' : ''}>Open</option>
+                        <option value="in_progress" ${ticket.status === 'in_progress' ? 'selected' : ''}>In Progress</option>
+                        <option value="closed" ${ticket.status === 'closed' ? 'selected' : ''}>Closed</option>
+                    </select><br/>
+                    <em>${ticket.description}</em><br/>
+                    <strong>Responses:</strong>
+                    <div class="responses">
+                        ${ticket.responses.map(r => `<div class="response"><strong>User ${r.responder_id}:</strong> ${r.message} <small>(${new Date(r.timestamp).toLocaleString()})</small></div>`).join('')}
+                    </div>
+                    <form class="response-form" data-ticket-id="${ticket.id}">
+                        <textarea name="message" placeholder="Add a response..." required></textarea><br/>
+                        <button type="submit">Submit Response</button>
+                    </form>
+                `;
+                ticketsList.appendChild(ticketDiv);
+            });
+
+            // Add event listeners for response forms
+            document.querySelectorAll('.response-form').forEach(form => {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const ticketId = form.getAttribute('data-ticket-id');
+                    const message = form.message.value;
+                    const res = await fetch(`/tickets/add_ticket_response/${ticketId}/responses`, {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ message })
+                    });
+                    if (res.ok) {
+                        alert('Response added successfully');
+                        fetchTickets();
+                    } else {
+                        alert('Failed to add response');
+                    }
+                });
+            });
+
+            // Add event listeners for status select
+            document.querySelectorAll('.status-select').forEach(select => {
+                select.addEventListener('change', async (e) => {
+                    const ticketId = select.getAttribute('data-ticket-id');
+                    const status = select.value;
+                    const res = await fetch(`/tickets/update_ticket_status/${ticketId}`, {
+                        method: 'PATCH',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ status })
+                    });
+                    if (res.ok) {
+                        alert('Status updated successfully');
+                        fetchTickets();
+                    } else {
+                        alert('Failed to update status');
+                    }
+                });
+            });
+        }
+
+        fetchTickets();
+    </script>
+</body>
+</html>
