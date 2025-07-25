@@ -5,7 +5,7 @@ import schemas, models
 from database import get_db
 
 router = APIRouter()
-
+    
 def get_current_user(request: Request, db: Session = Depends(get_db)):
     user_email = request.cookies.get("user_email")
     if not user_email:
