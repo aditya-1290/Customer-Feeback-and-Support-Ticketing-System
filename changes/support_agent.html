@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Agent Dashboard | Premium Support</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #f72585;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --danger: #ef233c;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --border-radius: 8px;
+            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7ff;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header Styles */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .user-greeting h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .user-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .user-role {
+            background: var(--secondary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--danger);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .logout-btn:hover {
+            background: #d00040;
+            transform: translateY(-1px);
+        }
+
+        /* Ticket List */
+        .ticket-list {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.4rem;
+            color: var(--dark);
+        }
+
+        .ticket-filters {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        /* Ticket Card */
+        .ticket-card {
+            border: 1px solid #f0f0f0;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .ticket-card:hover {
+            border-color: #e0e0e0;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+        }
+
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .ticket-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark);
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .ticket-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .status-select {
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--border-radius);
+            border: 1px solid #e0e0e0;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .status-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .customer-info {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .priority-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .priority-low {
+            background: #d3f9d8;
+            color: #2b8a3e;
+        }
+
+        .priority-medium {
+            background: #fff3bf;
+            color: #e67700;
+        }
+
+        .priority-high {
+            background: #ffc9c9;
+            color: #c92a2a;
+        }
+
+        .ticket-date {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .ticket-body {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #f0f0f0;
+            color: var(--dark);
+            line-height: 1.7;
+        }
+
+        /* Responses */
+        .responses-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .response {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: var(--border-radius);
+            position: relative;
+            background: #f9f9f9;
+        }
+
+        .response::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--primary);
+            border-radius: 4px 0 0 4px;
+        }
+
+        .response-support {
+            background: #f5f7ff;
+        }
+
+        .response-user {
+            background: #f8f9fa;
+        }
+
+        .response-user::before {
+            background: var(--gray);
+        }
+
+        .response-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .responder {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .response-support .responder {
+            color: var(--primary);
+        }
+
+        .response-date {
+            color: var(--gray);
+        }
+
+        .response-content {
+            color: var(--dark);
+            line-height: 1.7;
+        }
+
+        /* Response Form */
+        .response-form {
+            margin-top: 1.5rem;
+        }
+
+        .response-form .form-control {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            min-height: 100px;
+            margin-bottom: 1rem;
+            font-family: inherit;
+        }
+
+        .response-form .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard {
+                padding: 1.5rem;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .list-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .ticket-filters {
+                width: 100%;
+            }
+            
+            .ticket-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .ticket-meta {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <header class="dashboard-header">
+            <div class="user-greeting">
+                <h1>Support Agent Dashboard</h1>
+                <div class="user-meta">
+                    <span class="user-name">Welcome, Agent</span>
+                    <span class="user-role">Support Agent</span>
+                </div>
+            </div>
+            <a href="/logout" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </header>
+
+        <section class="ticket-list">
+            <div class="list-header">
+                <h2 class="section-title">
+                    <i class="fas fa-ticket-alt"></i> All Tickets
+                </h2>
+                <div class="ticket-filters">
+                    <select class="filter-select" id="statusFilter">
+                        <option value="">All Statuses</option>
+                        <option value="open">Open</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="closed">Closed</option>
+                    </select>
+                    <select class="filter-select" id="priorityFilter">
+                        <option value="">All Priorities</option>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Sample Ticket 1 -->
+            <div class="ticket-card">
+                <div class="ticket-header">
+                    <h3 class="ticket-title">Problem with the service for my TV</h3>
+                    <div class="ticket-meta">
+                        <select class="status-select" data-ticket-id="1">
+                            <option value="open">Open</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="closed" selected>Closed</option>
+                        </select>
+                        <span class="priority-badge priority-medium">Medium</span>
+                        <span class="ticket-date">24/07/2025</span>
+                    </div>
+                </div>
+                
+                <div class="customer-info">
+                    Customer: Kunal (ID: 12345)
+                </div>
+                
+                <div class="ticket-body">
+                    Service agent delay with no proper reason
+                </div>
+                
+                <h4 class="responses-title">
+                    <i class="fas fa-comments"></i> Responses (4)
+                </h4>
+                
+                <div class="response response-support">
+                    <div class="response-meta">
+                        <span class="responder">Support Agent</span>
+                        <span class="response-date">24/07/2025 10:30 AM</span>
+                    </div>
+                    <div class="response-content">
+                        Sorry! For the unnecessary delay in the service. We have contacted the service agent he will get to you shortly so please wait for sometime.
+                    </div>
+                </div>
+                
+                <div class="response response-user">
+                    <div class="response-meta">
+                        <span class="responder">Customer</span>
+                        <span class="response-date">24/07/2025 11:45 AM</span>
+                    </div>
+                    <div class="response-content">
+                        Please get things done as soon as possible! thanks
+                    </div>
+                </div>
+                
+                <div class="response response-support">
+                    <div class="response-meta">
+                        <span class="responder">Support Agent</span>
+                        <span class="response-date">24/07/2025 2:15 PM</span>
+                    </div>
+                    <div class="response-content">
+                        Vehicular service came did his work and now everything is fine. Thank You!
+                    </div>
+                </div>
+                
+                <div class="response response-support">
+                    <div class="response-meta">
+                        <span class="responder">Support Agent</span>
+                        <span class="response-date">24/07/2025 3:30 PM</span>
+                    </div>
+                    <div class="response-content">
+                        Thanks for your update. If you have any queries/problems related anything please contact us.
+                    </div>
+                </div>
+                
+                <form class="response-form" data-ticket-id="1">
+                    <textarea class="form-control" placeholder="Add your response..." required></textarea>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-reply"></i> Submit Response
+                    </button>
+                </form>
+            </div>
+
+            <!-- Sample Ticket 2 -->
+            <div class="ticket-card">
+                <div class="ticket-header">
+                    <h3 class="ticket-title">Internet connection issues</h3>
+                    <div class="ticket-meta">
+                        <select class="status-select" data-ticket-id="2">
+                            <option value="open">Open</option>
+                            <option value="in_progress" selected>In Progress</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                        <span class="priority-badge priority-high">High</span>
+                        <span class="ticket-date">24/07/2025</span>
+                    </div>
+                </div>
+                
+                <div class="customer-info">
+                    Customer: Priya (ID: 67890)
+                </div>
+                
+                <div class="ticket-body">
+                    My internet connection keeps dropping every few minutes
+                </div>
+                
+                <h4 class="responses-title">
+                    <i class="fas fa-comments"></i> Responses (1)
+                </h4>
+                
+                <div class="response response-user">
+                    <div class="response-meta">
+                        <span class="responder">Customer</span>
+                        <span class="response-date">24/07/2025 4:45 PM</span>
+                    </div>
+                    <div class="response-content">
+                        Our work has been done. Thank You!
+                    </div>
+                </div>
+                
+                <form class="response-form" data-ticket-id="2">
+                    <textarea class="form-control" placeholder="Add your response..." required></textarea>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-reply"></i> Submit Response
+                    </button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Status change handler
+            document.querySelectorAll('.status-select').forEach(select => {
+                select.addEventListener('change', async function() {
+                    const ticketId = this.dataset.ticketId;
+                    const status = this.value;
+                    
+                    try {
+                        const response = await fetch(`/tickets/update_ticket_status/${ticketId}`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ status })
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error('Failed to update status');
+                        }
+                        
+                        // Visual feedback
+                        this.style.borderColor = '#4BB543';
+                        setTimeout(() => {
+                            this.style.borderColor = '#e0e0e0';
+                        }, 1000);
+                        
+                    } catch (error) {
+                        alert(error.message);
+                        this.value = this.dataset.previousValue;
+                    }
+                });
+            });
+            
+            // Response form handler
+            document.querySelectorAll('.response-form').forEach(form => {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const ticketId = this.dataset.ticketId;
+                    const message = this.querySelector('textarea').value;
+                    const submitBtn = this.querySelector('button');
+                    
+                    // Disable button during submission
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                    
+                    try {
+                        const response = await fetch(`/tickets/add_ticket_response/${ticketId}/responses`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ message })
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error('Failed to submit response');
+                        }
+                        
+                        // Reset form and show success
+                        this.reset();
+                        submitBtn.innerHTML = '<i class="fas fa-check"></i> Sent!';
+                        
+                        // Reload or update UI with new response
+                        setTimeout(() => {
+                            submitBtn.innerHTML = '<i class="fas fa-reply"></i> Submit Response';
+                            submitBtn.disabled = false;
+                            // In a real app, you would update the responses list here
+                            location.reload();
+                        }, 1500);
+                        
+                    } catch (error) {
+                        alert(error.message);
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="fas fa-reply"></i> Submit Response';
+                    }
+                });
+            });
+            
+            // Filter handlers
+            document.getElementById('statusFilter').addEventListener('change', function() {
+                // Implement filtering logic
+                console.log('Filter by status:', this.value);
+            });
+            
+            document.getElementById('priorityFilter').addEventListener('change', function() {
+                // Implement filtering logic
+                console.log('Filter by priority:', this.value);
+            });
+        });
+    </script>
+</body>
+</html>
+
+<!--- old support agent html file -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Support Agent Dashboard</title>
+    <link rel="stylesheet" href="/static/support_agent_dashboard.css" />
+</head>
+<body>
+    <div class="container">
+        <h2>Support Agent Dashboard</h2>
+        <a href="/logout" style="float: right; margin-bottom: 10px;">Logout</a>
+        <section id="ticket-list">
+            <h3>All Tickets</h3>
+            <div id="tickets"></div>
+        </section>
+    </div>
+
+    <script>
+        async function fetchTickets() {
+            const response = await fetch('/tickets/get_tickets', {
+                credentials: 'include',
+            });
+            const tickets = await response.json();
+            const ticketsList = document.getElementById('tickets');
+            ticketsList.innerHTML = '';
+            tickets.forEach(ticket => {
+                const ticketDiv = document.createElement('div');
+                ticketDiv.className = 'ticket';
+                ticketDiv.innerHTML = `
+                    <strong>${ticket.subject}</strong> - Status: 
+                    <select class="status-select" data-ticket-id="${ticket.id}">
+                        <option value="open" ${ticket.status === 'open' ? 'selected' : ''}>Open</option>
+                        <option value="in_progress" ${ticket.status === 'in_progress' ? 'selected' : ''}>In Progress</option>
+                        <option value="closed" ${ticket.status === 'closed' ? 'selected' : ''}>Closed</option>
+                    </select><br/>
+                    <em>${ticket.description}</em><br/>
+                    <strong>Responses:</strong>
+                    <div class="responses">
+                        ${ticket.responses.map(r => `<div class="response"><strong>User ${r.responder_id}:</strong> ${r.message} <small>(${new Date(r.timestamp).toLocaleString()})</small></div>`).join('')}
+                    </div>
+                    <form class="response-form" data-ticket-id="${ticket.id}">
+                        <textarea name="message" placeholder="Add a response..." required></textarea><br/>
+                        <button type="submit">Submit Response</button>
+                    </form>
+                `;
+                ticketsList.appendChild(ticketDiv);
+            });
+
+            // Add event listeners for response forms
+            document.querySelectorAll('.response-form').forEach(form => {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const ticketId = form.getAttribute('data-ticket-id');
+                    const message = form.message.value;
+                    const res = await fetch(`/tickets/add_ticket_response/${ticketId}/responses`, {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ message })
+                    });
+                    if (res.ok) {
+                        alert('Response added successfully');
+                        fetchTickets();
+                    } else {
+                        alert('Failed to add response');
+                    }
+                });
+            });
+
+            // Add event listeners for status select
+            document.querySelectorAll('.status-select').forEach(select => {
+                select.addEventListener('change', async (e) => {
+                    const ticketId = select.getAttribute('data-ticket-id');
+                    const status = select.value;
+                    const res = await fetch(`/tickets/update_ticket_status/${ticketId}`, {
+                        method: 'PATCH',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ status })
+                    });
+                    if (res.ok) {
+                        alert('Status updated successfully');
+                        fetchTickets();
+                    } else {
+                        alert('Failed to update status');
+                    }
+                });
+            });
+        }
+
+        fetchTickets();
+    </script>
+</body>
+</html>

@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard | Support System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/customer_dashboard.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <div class="user-info">
+                <h1>Customer Dashboard</h1>
+                <div class="user-meta">
+                    <span class="welcome">Welcome, <strong>{{user.name}}</strong></span>
+                    <span class="role-badge">Customer</span>
+                </div>
+            </div>
+            <a href="/logout" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </header>
+
+        <main class="dashboard-content">
+            <!-- Create New Ticket Section -->
+            <section class="ticket-creation">
+                <h2><i class="fas fa-plus-circle"></i> Create New Ticket</h2>
+                <form id="ticketForm" class="ticket-form">
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" id="subject" name="subject" placeholder="Briefly describe your issue" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" placeholder="Please provide detailed information about your issue" required></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="priority">Priority</label>
+                            <select id="priority" name="priority">
+                                <option value="low">Low</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Submit Ticket
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Ticket List Section -->
+            <section class="ticket-list-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-ticket-alt"></i> Your Tickets</h2>
+                    <div class="ticket-filters">
+                        <select id="statusFilter" class="filter-select">
+                            <option value="">All Statuses</option>
+                            <option value="open">Open</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                        <select id="priorityFilter" class="filter-select">
+                            <option value="">All Priorities</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Sample Ticket 1 -->
+                <div class="ticket-card">
+                    <div class="ticket-header">
+                        <h3>problem with the service for my tv</h3>
+                        <div class="ticket-meta">
+                            <span class="status-badge closed">Closed</span>
+                            <span class="priority-badge medium">Medium</span>
+                            <span class="ticket-date">24/07/2025</span>
+                        </div>
+                    </div>
+                    <div class="ticket-body">
+                        <p>service agent delay with no proper reason</p>
+                    </div>
+                    
+                    <div class="ticket-responses">
+                        <h4><i class="fas fa-comments"></i> Responses (4)</h4>
+                        
+                        <div class="response support-agent">
+                            <div class="response-meta">
+                                <span class="responder">Support Agent</span>
+                                <span class="response-date">24/07/2025 10:30 AM</span>
+                            </div>
+                            <div class="response-content">
+                                Sorry! For the unnecessary delay in the service. We have contacted the service agent he will get to you shortly so please wait for sometime.
+                            </div>
+                        </div>
+                        
+                        <div class="response customer">
+                            <div class="response-meta">
+                                <span class="responder">You</span>
+                                <span class="response-date">24/07/2025 11:45 AM</span>
+                            </div>
+                            <div class="response-content">
+                                Please get things done as soon as possible! thanks
+                            </div>
+                        </div>
+                        
+                        <div class="response support-agent">
+                            <div class="response-meta">
+                                <span class="responder">Support Agent</span>
+                                <span class="response-date">24/07/2025 2:15 PM</span>
+                            </div>
+                            <div class="response-content">
+                                Vehicular service came did his work and now everything is fine. Thank You!
+                            </div>
+                        </div>
+                        
+                        <div class="response support-agent">
+                            <div class="response-meta">
+                                <span class="responder">Support Agent</span>
+                                <span class="response-date">24/07/2025 3:30 PM</span>
+                            </div>
+                            <div class="response-content">
+                                Thanks for your update. If you have any queries/problems related anything please contact us.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form class="response-form">
+                        <div class="form-group">
+                            <textarea placeholder="Add your response..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-secondary">
+                            <i class="fas fa-reply"></i> Submit Response
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Sample Ticket 2 -->
+                <div class="ticket-card">
+                    <div class="ticket-header">
+                        <h3>a</h3>
+                        <div class="ticket-meta">
+                            <span class="status-badge in-progress">In Progress</span>
+                            <span class="priority-badge high">High</span>
+                            <span class="ticket-date">24/07/2025</span>
+                        </div>
+                    </div>
+                    <div class="ticket-body">
+                        <p>b</p>
+                    </div>
+                    
+                    <div class="ticket-responses">
+                        <h4><i class="fas fa-comments"></i> Responses (1)</h4>
+                        
+                        <div class="response customer">
+                            <div class="response-meta">
+                                <span class="responder">You</span>
+                                <span class="response-date">24/07/2025 4:45 PM</span>
+                            </div>
+                            <div class="response-content">
+                                Our work has been done. Thank You!
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form class="response-form">
+                        <div class="form-group">
+                            <textarea placeholder="Add your response..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-secondary">
+                            <i class="fas fa-reply"></i> Submit Response
+                        </button>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard - Support System</title>
+    <link rel="stylesheet" href="/static/customer_dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <h1>Customer Dashboard</h1>
+            <div class="user-actions">
+                <span class="welcome-msg">Welcome, <strong>{{ user.name }}</strong></span>
+                <a href="/logout" class="btn btn-logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </header>
+
+        <main class="dashboard-content">
+            <section class="ticket-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-plus-circle"></i> Create New Ticket</h2>
+                </div>
+                
+                <form id="ticketForm" class="ticket-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <input type="text" id="subject" name="subject" required placeholder="Briefly describe your issue">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea id="description" name="description" required placeholder="Please provide detailed information about your issue"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="priority">Priority</label>
+                            <select id="priority" name="priority">
+                                <option value="low">Low</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Submit Ticket
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="ticket-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-ticket-alt"></i> Your Tickets</h2>
+                    <div class="ticket-filters">
+                        <select id="statusFilter" class="filter-select">
+                            <option value="">All Statuses</option>
+                            <option value="open">Open</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="resolved">Resolved</option>
+                        </select>
+                        <select id="priorityFilter" class="filter-select">
+                            <option value="">All Priorities</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="tickets" class="ticket-list">
+                    <!-- Tickets will be loaded here via JavaScript 
+                    <div class="loading-tickets">
+                        <i class="fas fa-spinner fa-spin"></i> Loading your tickets...
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Enhanced JavaScript with error handling and loading states
+        document.addEventListener('DOMContentLoaded', function() {
+            const ticketForm = document.getElementById('ticketForm');
+            const statusFilter = document.getElementById('statusFilter');
+            const priorityFilter = document.getElementById('priorityFilter');
+            const ticketsContainer = document.getElementById('tickets');
+
+            // Fetch tickets with loading state
+            async function fetchTickets(status = '', priority = '') {
+                ticketsContainer.innerHTML = `
+                    <div class="loading-tickets">
+                        <i class="fas fa-spinner fa-spin"></i> Loading your tickets...
+                    </div>
+                `;
+                
+                try {
+                    const response = await fetch(`/tickets/get_tickets?status=${status}&priority=${priority}`, {
+                        credentials: 'include',
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch tickets');
+                    }
+
+                    const tickets = await response.json();
+                    renderTickets(tickets);
+                } catch (error) {
+                    ticketsContainer.innerHTML = `
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-circle"></i> ${error.message}
+                        </div>
+                    `;
+                    console.error('Error fetching tickets:', error);
+                }
+            }
+
+            // Render tickets with proper status and priority badges
+            function renderTickets(tickets) {
+                if (tickets.length === 0) {
+                    ticketsContainer.innerHTML = `
+                        <div class="no-tickets">
+                            <i class="fas fa-inbox"></i> No tickets found
+                        </div>
+                    `;
+                    return;
+                }
+
+                ticketsContainer.innerHTML = tickets.map(ticket => `
+                    <div class="ticket-card" data-id="${ticket.id}">
+                        <div class="ticket-header">
+                            <h3>${ticket.subject}</h3>
+                            <div class="ticket-meta">
+                                <span class="status-badge status-${ticket.status}">
+                                    ${ticket.status.replace('_', ' ')}
+                                </span>
+                                <span class="priority-badge priority-${ticket.priority}">
+                                    ${ticket.priority}
+                                </span>
+                                <span class="ticket-date">
+                                    ${new Date(ticket.created_at).toLocaleDateString()}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="ticket-body">
+                            <p>${ticket.description}</p>
+                        </div>
+                        
+                        <div class="ticket-responses">
+                            <h4>Responses (${ticket.responses.length})</h4>
+                            ${ticket.responses.map(response => `
+                                <div class="response ${response.responder_id === ticket.user_id ? 'user-response' : 'support-response'}">
+                                    <div class="response-meta">
+                                        <span class="responder">
+                                            ${response.responder_id === ticket.user_id ? 'You' : 'Support Agent'}
+                                        </span>
+                                        <span class="response-date">
+                                            ${new Date(response.created_at).toLocaleString()}
+                                        </span>
+                                    </div>
+                                    <div class="response-content">
+                                        ${response.message}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <form class="response-form" data-ticket-id="${ticket.id}">
+                            <div class="form-group">
+                                <textarea name="message" placeholder="Add your response..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-secondary">
+                                <i class="fas fa-reply"></i> Submit Response
+                            </button>
+                        </form>
+                    </div>
+                `).join('');
+
+                // Add event listeners to all response forms
+                document.querySelectorAll('.response-form').forEach(form => {
+                    form.addEventListener('submit', async (e) => {
+                        e.preventDefault();
+                        const ticketId = form.dataset.ticketId;
+                        const message = form.message.value.trim();
+                        
+                        if (!message) return;
+                        
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                        
+                        try {
+                            const res = await fetch(`/tickets/add_ticket_response/${ticketId}/responses`, {
+                                method: 'POST',
+                                credentials: 'include',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ message })
+                            });
+                            
+                            if (res.ok) {
+                                form.message.value = '';
+                                fetchTickets(statusFilter.value, priorityFilter.value);
+                            } else {
+                                throw new Error('Failed to add response');
+                            }
+                        } catch (error) {
+                            alert(error.message);
+                        } finally {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = '<i class="fas fa-reply"></i> Submit Response';
+                        }
+                    });
+                });
+            }
+
+            // Ticket form submission
+            ticketForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitBtn = ticketForm.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+                
+                try {
+                    const response = await fetch('/tickets/create_ticket', {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            subject: ticketForm.subject.value,
+                            description: ticketForm.description.value,
+                            priority: ticketForm.priority.value
+                        })
+                    });
+
+                    if (response.ok) {
+                        ticketForm.reset();
+                        fetchTickets(statusFilter.value, priorityFilter.value);
+                    } else {
+                        throw new Error('Failed to submit ticket');
+                    }
+                } catch (error) {
+                    alert(error.message);
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Ticket';
+                }
+            });
+
+            // Filter change handlers
+            statusFilter.addEventListener('change', () => {
+                fetchTickets(statusFilter.value, priorityFilter.value);
+            });
+
+            priorityFilter.addEventListener('change', () => {
+                fetchTickets(statusFilter.value, priorityFilter.value);
+            });
+
+            // Initial load
+            fetchTickets();
+        });
+    </script>
+</body>
+</html> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard | Support System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/customer_dashboard.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <div class="user-info">
+                <h1>Customer Dashboard</h1>
+                <div class="user-meta">
+                    <span class="welcome">Welcome, <strong>{{user.name}}</strong></span>
+                    <span class="role-badge">Customer</span>
+                </div>
+            </div>
+            <a href="/logout" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </header>
+
+        <main class="dashboard-content">
+            <!-- Create New Ticket Section 
+            <section class="ticket-creation">
+                <h2><i class="fas fa-plus-circle"></i> Create New Ticket</h2>
+                <form id="ticketForm" class="ticket-form">
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" id="subject" name="subject" placeholder="Briefly describe your issue" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" placeholder="Please provide detailed information about your issue" required></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="priority">Priority</label>
+                            <select id="priority" name="priority">
+                                <option value="low">Low</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Submit Ticket
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Ticket List Section 
+            <section class="ticket-list-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-ticket-alt"></i> Your Tickets</h2>
+                    <div class="ticket-filters">
+                        <select id="statusFilter" class="filter-select">
+                            <option value="">All Statuses</option>
+                            <option value="open">Open</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                        <select id="priorityFilter" class="filter-select">
+                            <option value="">All Priorities</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Sample Ticket 1 
+                <div class="ticket-card">
+                    <div class="ticket-header">
+                        <h3>problem with the service for my tv</h3>
+                        <div class="ticket-meta">
+                            <span class="status-badge closed">Closed</span>
+                            <span class="priority-badge medium">Medium</span>
+                            <span class="ticket-date">24/07/2025</span>
+                        </div>
+                    </div>
+                    <div class="ticket-body">
+                        <p>service agent delay with no proper reason</p>
+                    </div>
+                    
+                    <div class="ticket-responses">
+                        <h4><i class="fas fa-comments"></i> Responses (4)</h4>
+                        
+                        <div class="response support-agent">
+                            <div class="response-meta">
+                                <span class="responder">Support Agent</span>
+                                <span class="response-date">24/07/2025 10:30 AM</span>
+                            </div>
+                            <div class="response-content">
+                                Sorry! For the unnecessary delay in the service. We have contacted the service agent he will get to you shortly so please wait for sometime.
+                            </div>
+                        </div>
+                        
+                        <div class="response customer">
+                            <div class="response-meta">
+                                <span class="responder">You</span>
+                                <span class="response-date">24/07/2025 11:45 AM</span>
+                            </div>
+                            <div class="response-content">
+                                Please get things done as soon as possible! thanks
+                            </div>
+                        </div>
+                        
+                        <div class="response support-agent">
+                            <div class="response-meta">
+                                <span class="responder">Support Agent</span>
+                                <span class="response-date">24/07/2025 2:15 PM</span>
+                            </div>
+                            <div class="response-content">
+                                Vehicular service came did his work and now everything is fine. Thank You!
+                            </div>
+                        </div>
+                        
+                        <div class="response support-agent">
+                            <div class="response-meta">
+                                <span class="responder">Support Agent</span>
+                                <span class="response-date">24/07/2025 3:30 PM</span>
+                            </div>
+                            <div class="response-content">
+                                Thanks for your update. If you have any queries/problems related anything please contact us.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form class="response-form">
+                        <div class="form-group">
+                            <textarea placeholder="Add your response..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-secondary">
+                            <i class="fas fa-reply"></i> Submit Response
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Sample Ticket 2 
+                <div class="ticket-card">
+                    <div class="ticket-header">
+                        <h3>a</h3>
+                        <div class="ticket-meta">
+                            <span class="status-badge in-progress">In Progress</span>
+                            <span class="priority-badge high">High</span>
+                            <span class="ticket-date">24/07/2025</span>
+                        </div>
+                    </div>
+                    <div class="ticket-body">
+                        <p>b</p>
+                    </div>
+                    
+                    <div class="ticket-responses">
+                        <h4><i class="fas fa-comments"></i> Responses (1)</h4>
+                        
+                        <div class="response customer">
+                            <div class="response-meta">
+                                <span class="responder">You</span>
+                                <span class="response-date">24/07/2025 4:45 PM</span>
+                            </div>
+                            <div class="response-content">
+                                Our work has been done. Thank You!
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form class="response-form">
+                        <div class="form-group">
+                            <textarea placeholder="Add your response..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-secondary">
+                            <i class="fas fa-reply"></i> Submit Response
+                        </button>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>-->

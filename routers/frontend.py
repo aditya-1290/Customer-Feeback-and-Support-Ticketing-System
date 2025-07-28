@@ -45,10 +45,14 @@ def post_login(request: Request, email: str = Form(...), password: str = Form(..
     return response
 
 @router.get("/dashboard", response_class=HTMLResponse)
-def get_dashboard(request: Request):
+def get_dashboard(request: Request, db: Session = Depends(get_db)):
     user_role = request.cookies.get("user_role")
+    user_email = request.cookies.get("user_email")
     if user_role == "customer":
-        return templates.TemplateResponse(request, "customer_dashboard.html", {"request": request})
+        user = None
+        if user_email:
+            user = db.query(models.User).filter(models.User.email == user_email).first()
+        return templates.TemplateResponse(request, "customer_dashboard.html", {"request": request, "user": user})
     elif user_role == "support_agent":
         return templates.TemplateResponse(request, "support_agent_dashboard.html", {"request": request})
     else:
