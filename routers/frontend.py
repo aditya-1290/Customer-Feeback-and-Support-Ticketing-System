@@ -5,8 +5,8 @@ from sqlalchemy.orm import Session
 from database import get_db
 import models
 from core import security
-from starlette.middleware.sessions import SessionMiddleware
-from fastapi import FastAPI
+# from starlette.middleware.sessions import SessionMiddleware
+# from fastapi import FastAPI
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -36,34 +36,42 @@ def post_register(request: Request, name: str = Form(...), email: str = Form(...
 
 from core import security
 
+from fastapi.responses import JSONResponse
+
 @router.post("/login")
 def post_login(request: Request, email: str = Form(...), password: str = Form(...), role: str = Form(...), db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.email == email).first()
     if not user or not security.verify_password(password, user.password_hash) or user.role.value != role:
-        return templates.TemplateResponse(request, "login.html", {"request": request, "error": "Invalid credentials or role"})
+        return JSONResponse(status_code=400, content={"error": "Invalid credentials or role"})
     access_token = security.create_access_token(data={"sub": user.email, "role": user.role.value})
-    response = RedirectResponse(url="/dashboard", status_code=status.HTTP_302_FOUND)
-    response.set_cookie(key="access_token", value=f"Bearer {access_token}", httponly=True)
-    return response
+    return JSONResponse(content={"access_token": access_token, "token_type": "bearer"})
+
+from fastapi import Header
 
 @router.get("/dashboard", response_class=HTMLResponse)
-def get_dashboard(request: Request, db: Session = Depends(get_db)):
-    token = request.cookies.get("access_token")
-    if not token:
-        return RedirectResponse(url="/login")
-    token = token.removeprefix("Bearer ").strip()
+def get_dashboard(request: Request, authorization: str = Header(None), db: Session = Depends(get_db)):
+    if not authorization:
+        # Fallback: try to get token from cookie for normal browser navigation
+        token = request.cookies.get("access_token")
+        if not token:
+            return RedirectResponse(url="/login")
+    else:
+        token = authorization.removeprefix("Bearer ").strip()
     payload = security.decode_access_token(token)
+    print(token, "DEBUG: JWT token")
+    print(payload, "DEBUG: Decoded JWT payload")
     if not payload:
         return RedirectResponse(url="/login")
     user_email = payload.get("sub")
     user_role = payload.get("role")
+    print(user_email, user_role, "DEBUG: User email and role from token")
+    # Instead of rendering templates, just return a simple HTML page with a placeholder
     if user_role == "customer":
-        user = None
-        if user_email:
-            user = db.query(models.User).filter(models.User.email == user_email).first()
-        return templates.TemplateResponse(request, "customer_dashboard.html", {"request": request, "user": user})
+        # Return the customer dashboard page (static page)
+        return RedirectResponse(url="/customer_dashboard.html")
     elif user_role == "support_agent":
-        return templates.TemplateResponse(request, "support_agent_dashboard.html", {"request": request})
+        # Return the support agent dashboard page (static page)
+        return RedirectResponse(url="/support_agent_dashboard.html")
     else:
         return RedirectResponse(url="/login")
 

@@ -21,4 +21,4 @@ templates = Jinja2Templates(directory=templates_dir)
 app.include_router(frontend.router)
 app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(tickets.router, prefix="/tickets", tags=["Tickets"])
-   
+              
