@@ -1,12 +1,10 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | Customer Support System</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel ="stylesheet" href="{{ url_for('static', path='/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -55,7 +53,7 @@
             
             <div class="form-footer">
                 <p>Don't have an account? <a href="/register">Create one here</a></p>
-                <p><a href="/forgot-password">Forgot your password?</a></p>
+               <!-- <p><a href="/forgot-password">Forgot your password?</a></p>-->
             </div>
         </form>
     </div>

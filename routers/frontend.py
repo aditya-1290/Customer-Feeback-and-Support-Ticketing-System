@@ -34,20 +34,29 @@ def post_register(request: Request, name: str = Form(...), email: str = Form(...
     db.commit()
     return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
 
+from core import security
+
 @router.post("/login")
 def post_login(request: Request, email: str = Form(...), password: str = Form(...), role: str = Form(...), db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.email == email).first()
     if not user or not security.verify_password(password, user.password_hash) or user.role.value != role:
         return templates.TemplateResponse(request, "login.html", {"request": request, "error": "Invalid credentials or role"})
+    access_token = security.create_access_token(data={"sub": user.email, "role": user.role.value})
     response = RedirectResponse(url="/dashboard", status_code=status.HTTP_302_FOUND)
-    response.set_cookie(key="user_email", value=user.email)
-    response.set_cookie(key="user_role", value=user.role.value)
+    response.set_cookie(key="access_token", value=f"Bearer {access_token}", httponly=True)
     return response
 
 @router.get("/dashboard", response_class=HTMLResponse)
 def get_dashboard(request: Request, db: Session = Depends(get_db)):
-    user_role = request.cookies.get("user_role")
-    user_email = request.cookies.get("user_email")
+    token = request.cookies.get("access_token")
+    if not token:
+        return RedirectResponse(url="/login")
+    token = token.removeprefix("Bearer ").strip()
+    payload = security.decode_access_token(token)
+    if not payload:
+        return RedirectResponse(url="/login")
+    user_email = payload.get("sub")
+    user_role = payload.get("role")
     if user_role == "customer":
         user = None
         if user_email:
@@ -61,6 +70,5 @@ def get_dashboard(request: Request, db: Session = Depends(get_db)):
 @router.get("/logout")
 def logout():
     response = RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
-    response.delete_cookie("user_email")
-    response.delete_cookie("user_role")
+    response.delete_cookie("access_token")
     return response
