@@ -6,184 +6,93 @@
     <title>Support Agent Dashboard | Premium Support</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel ="stylesheet" href="{{ url_for('static', path='/support_agent_dashboard.css') }}">
-
 </head>
 <body>
     <div class="dashboard">
         <header class="dashboard-header">
             <div class="user-greeting">
                 <h1>Support Agent Dashboard</h1>
-        <div class="user-meta">
-            <span class="user-name">Welcome, {{ user.name }}</span>
-            <span class="user-role">{{ user.role.value | capitalize }}</span>
-        </div>
-    </div>
-    <a href="/logout" class="logout-btn">
-        <i class="fas fa-sign-out-alt"></i> Logout
-    </a>
-</header>
-
-<section class="ticket-list">
-    <div class="list-header">
-        <h2 class="section-title">
-            <i class="fas fa-ticket-alt"></i> All Tickets
-        </h2>
-        <div class="ticket-filters">
-            <select class="filter-select" id="statusFilter">
-                <option value="">All Statuses</option>
-                <option value="open">Open</option>
-                <option value="in_progress">In Progress</option>
-                <option value="closed">Closed</option>
-            </select>
-            <select class="filter-select" id="priorityFilter">
-                <option value="">All Priorities</option>
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-            </select>
-        </div>
-    </div>
-
-    {% for ticket in tickets %}
-    <div class="ticket-card">
-        <div class="ticket-header">
-            <h3 class="ticket-title">{{ ticket.subject }}</h3>
-            <div class="ticket-meta">
-                <select class="status-select" data-ticket-id="{{ ticket.id }}">
-                    <option value="open" {% if ticket.status.value == 'open' %}selected{% endif %}>Open</option>
-                    <option value="in_progress" {% if ticket.status.value == 'in_progress' %}selected{% endif %}>In Progress</option>
-                    <option value="closed" {% if ticket.status.value == 'closed' %}selected{% endif %}>Closed</option>
-                </select>
-                <span class="priority-badge priority-{{ ticket.priority | lower }}">{{ ticket.priority | capitalize }}</span>
-                <span class="ticket-date">{{ ticket.created_at.strftime('%d/%m/%Y') }}</span>
+                <div class="user-meta">
+                    <span class="user-name">Welcome, {{ user.name }}</span>
+                    <span class="user-role">{{ user.role | capitalize }}</span>
+                </div>
             </div>
-        </div>
-        
-        <div class="customer-info">
-            Customer: {{ ticket.user.name }} (ID: {{ ticket.user.id }})
-        </div>
-        
-        <div class="ticket-body">
-            {{ ticket.description }}
-        </div>
-        
-        <h4 class="responses-title">
-            <i class="fas fa-comments"></i> Responses ({{ ticket.responses | length }})
-        </h4>
-        
-        {% for response in ticket.responses %}
-        <div class="response response-{{ 'support' if response.responder.role == 'support_agent' else 'user' }}">
-            <div class="response-meta">
-                <span class="responder">{{ 'Support Agent' if response.responder.role == 'support_agent' else 'Customer' }}</span>
-                <span class="response-date">{{ response.timestamp.strftime('%d/%m/%Y %I:%M %p') }}</span>
-            </div>
-            <div class="response-content">
-                {{ response.message }}
-            </div>
-        </div>
-        {% endfor %}
-        
-        <form class="response-form" data-ticket-id="{{ ticket.id }}">
-            <textarea class="form-control" placeholder="Add your response..." required></textarea>
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-reply"></i> Submit Response
-            </button>
-        </form>
-    </div>
-    {% endfor %}
-</section>
-</div>
+            <a href="/logout" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </header>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Status change handler
-        document.querySelectorAll('.status-select').forEach(select => {
-            select.addEventListener('change', async function() {
-                const ticketId = this.dataset.ticketId;
-                const status = this.value;
+        <section class="ticket-list">
+            <div class="list-header">
+                <h2 class="section-title">
+                    <i class="fas fa-ticket-alt"></i> All Tickets
+                </h2>
+                <form method="get" action="/support_agent_dashboard" class="ticket-filters">
+                    <select name="status" class="filter-select" onchange="this.form.submit()">
+                        <option value="">All Statuses</option>
+                        <option value="open" {% if request.query_params.get('status') == 'open' %}selected{% endif %}>Open</option>
+                        <option value="in_progress" {% if request.query_params.get('status') == 'in_progress' %}selected{% endif %}>In Progress</option>
+                        <option value="closed" {% if request.query_params.get('status') == 'closed' %}selected{% endif %}>Closed</option>
+                    </select>
+                    <select name="priority" class="filter-select" onchange="this.form.submit()">
+                        <option value="">All Priorities</option>
+                        <option value="low" {% if request.query_params.get('priority') == 'low' %}selected{% endif %}>Low</option>
+                        <option value="medium" {% if request.query_params.get('priority') == 'medium' %}selected{% endif %}>Medium</option>
+                        <option value="high" {% if request.query_params.get('priority') == 'high' %}selected{% endif %}>High</option>
+                    </select>
+                </form>
+            </div>
+
+            {% for ticket in tickets %}
+            <div class="ticket-card">
+                <div class="ticket-header">
+                    <h3 class="ticket-title">{{ ticket.subject }}</h3>
+                    <div class="ticket-meta">
+                        <form method="post" action="/update_ticket_status/{{ ticket.id }}" class="status-form">
+                            <select name="status" class="status-select" onchange="this.form.submit()">
+                                <option value="open" {% if ticket.status.value == 'open' %}selected{% endif %}>Open</option>
+                                <option value="in_progress" {% if ticket.status.value == 'in_progress' %}selected{% endif %}>In Progress</option>
+                                <option value="closed" {% if ticket.status.value == 'closed' %}selected{% endif %}>Closed</option>
+                            </select>
+                        </form>
+                        <span class="priority-badge priority-{{ ticket.priority | lower }}">{{ ticket.priority | capitalize }}</span>
+                        <span class="ticket-date">{{ ticket.created_at.strftime('%d/%m/%Y') }}</span>
+                    </div>
+                </div>
                 
-                try {
-                    const response = await fetch(`/tickets/update_ticket_status/${ticketId}`, {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ status })
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error('Failed to update status');
-                    }
-                    
-                    // Visual feedback
-                    this.style.borderColor = '#4BB543';
-                    setTimeout(() => {
-                        this.style.borderColor = '#e0e0e0';
-                    }, 1000);
-                    
-                } catch (error) {
-                    alert(error.message);
-                    this.value = this.dataset.previousValue;
-                }
-            });
-        });
-        
-        // Response form handler
-        document.querySelectorAll('.response-form').forEach(form => {
-            form.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                const ticketId = this.dataset.ticketId;
-                const message = this.querySelector('textarea').value;
-                const submitBtn = this.querySelector('button');
+                <div class="customer-info">
+                    Customer: {{ ticket.user.name }} (ID: {{ ticket.user.id }})
+                </div>
                 
-                // Disable button during submission
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                <div class="ticket-body">
+                    {{ ticket.description }}
+                </div>
                 
-                try {
-                    const response = await fetch(`/tickets/add_ticket_response/${ticketId}/responses`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ message })
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error('Failed to submit response');
-                    }
-                    
-                    // Reset form and show success
-                    this.reset();
-                    submitBtn.innerHTML = '<i class="fas fa-check"></i> Sent!';
-                    
-                    // Reload or update UI with new response
-                    setTimeout(() => {
-                        submitBtn.innerHTML = '<i class="fas fa-reply"></i> Submit Response';
-                        submitBtn.disabled = false;
-                        // In a real app, you would update the responses list here
-                        location.reload();
-                    }, 1500);
-                    
-                } catch (error) {
-                    alert(error.message);
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<i class="fas fa-reply"></i> Submit Response';
-                }
-            });
-        });
-        
-        // Filter handlers
-        document.getElementById('statusFilter').addEventListener('change', function() {
-            // Implement filtering logic
-            console.log('Filter by status:', this.value);
-        });
-        
-        document.getElementById('priorityFilter').addEventListener('change', function() {
-            // Implement filtering logic
-            console.log('Filter by priority:', this.value);
-        });
-    });
-</script>
+                <h4 class="responses-title">
+                    <i class="fas fa-comments"></i> Responses ({{ ticket.responses | length }})
+                </h4>
+                
+                {% for response in ticket.responses %}
+                <div class="response response-{{ 'support' if response.responder.role == 'support_agent' else 'user' }}">
+                    <div class="response-meta">
+                        <span class="responder">{{ 'Support Agent' if response.responder.role == 'support_agent' else 'Customer' }}</span>
+                        <span class="response-date">{{ response.timestamp.strftime('%d/%m/%Y %I:%M %p') }}</span>
+                    </div>
+                    <div class="response-content">
+                        {{ response.message }}
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <form method="post" action="/add_ticket_response/{{ ticket.id }}/responses" class="response-form">
+                    <textarea name="message" class="form-control" placeholder="Add your response..." required></textarea>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-reply"></i> Submit Response
+                    </button>
+                </form>
+            </div>
+            {% endfor %}
+        </section>
+    </div>
 </body>
 </html>

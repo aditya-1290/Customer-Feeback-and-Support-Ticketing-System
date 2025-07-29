@@ -117,3 +117,34 @@
     </div>
 </body>
 </html>-->
+
+
+async function handleLogin(event) {
+    event.preventDefault();
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    
+    try {
+        const response = await fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                email: form.email.value,
+                password: form.password.value,
+                role: form.role.value
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(await response.text());
+        }
+
+        window.location.href = '/dashboard';
+    } catch (error) {
+        // Show error message
+    } finally {
+        submitBtn.disabled = false;
+    }
+}

@@ -9,7 +9,7 @@ app = FastAPI(title="Customer Feedback and Support Ticketing System")
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
-
+   
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -21,4 +21,5 @@ templates = Jinja2Templates(directory=templates_dir)
 app.include_router(frontend.router)
 app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(tickets.router, prefix="/tickets", tags=["Tickets"])
+
               

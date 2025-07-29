@@ -1,18 +1,25 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Depends, HTTPException, status, Request, Header
 from sqlalchemy.orm import Session
 from typing import List
 import schemas, models
 from database import get_db
+from core.security import decode_access_token
 
 router = APIRouter()
-    
-def get_current_user(request: Request, db: Session = Depends(get_db)):
-    user_email = request.cookies.get("user_email")
-    if not user_email:
+
+async def get_current_user(authorization: str = Header(None), db: Session = Depends(get_db)):
+    if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
+    token = authorization.removeprefix("Bearer ").strip()
+    payload = decode_access_token(token)
+    if not payload:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+
+    user_email = payload.get("sub")
     user = db.query(models.User).filter(models.User.email == user_email).first()
-    if user is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
     return user
 
 @router.post("/create_ticket", response_model=schemas.TicketResponseOut)

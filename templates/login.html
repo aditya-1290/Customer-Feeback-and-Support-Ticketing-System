@@ -19,13 +19,7 @@
         </div>
         {% endif %}
 
-        {% if message %}
-        <div class="alert alert-success">
-            <i class="fas fa-check-circle"></i> {{ message }}
-        </div>
-        {% endif %}
-
-        <form id="loginForm" class="auth-form" onsubmit="return handleLogin(event);">
+        <form id="loginForm" method="post" action="/login" class="auth-form">
             <div class="form-group">
                 <label for="email"><i class="fas fa-envelope"></i> Email:</label>
                 <input type="email" id="email" name="email" required />
@@ -34,7 +28,6 @@
             <div class="form-group">
                 <label for="password"><i class="fas fa-lock"></i> Password:</label>
                 <input type="password" id="password" name="password" required />
-                <small class="password-toggle"><i class="fas fa-eye"></i> Show Password</small>
             </div>
 
             <div class="form-group">
@@ -53,76 +46,8 @@
 
             <div class="form-footer">
                 <p>Don't have an account? <a href="/register">Create one here</a></p>
-                <!-- <p><a href="/forgot-password">Forgot your password?</a></p> -->
             </div>
         </form>
     </div>
-
-    <script>
-        // Toggle password visibility
-        document.querySelector('.password-toggle').addEventListener('click', function () {
-            const passwordInput = document.getElementById('password');
-            const icon = this.querySelector('i');
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                icon.classList.replace('fa-eye', 'fa-eye-slash');
-                this.textContent = ' Hide Password';
-            } else {
-                passwordInput.type = 'password';
-                icon.classList.replace('fa-eye-slash', 'fa-eye');
-                this.textContent = ' Show Password';
-            }
-            this.prepend(icon);
-        });
-
-        async function handleLogin(event) {
-            console.log("handleLogin called");
-            event.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const role = document.getElementById('role').value;
-
-            console.log("Sending login request for email:", email, "role:", role);
-
-            const response = await fetch('/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    email: email,
-                    password: password,
-                    role: role,
-                }),
-            });
-
-            console.log("Login response status:", response.status);
-
-            if (response.ok) {
-                const data = await response.json();
-                console.log("Login successful, received token:", data.access_token);
-                localStorage.setItem('access_token', data.access_token);
-                localStorage.setItem('token_type', data.token_type);
-                // Redirect to dashboard
-                window.location.href = '/dashboard';
-                return false;
-            } else {
-                const errorData = await response.json();
-                console.log("Login failed with error:", errorData.error);
-                const errorDiv = document.getElementById('error-message');
-                if (!errorDiv) {
-                    const newErrorDiv = document.createElement('div');
-                    newErrorDiv.id = 'error-message';
-                    newErrorDiv.style.color = 'red';
-                    newErrorDiv.textContent = errorData.error || 'Login failed';
-                    document.querySelector('.container').prepend(newErrorDiv);
-                } else {
-                    errorDiv.textContent = errorData.error || 'Login failed';
-                    errorDiv.style.display = 'block';
-                }
-                return false;
-            }
-        }
-    </script>
 </body>
 </html>

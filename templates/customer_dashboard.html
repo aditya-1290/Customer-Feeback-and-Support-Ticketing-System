@@ -14,7 +14,7 @@
                 <h1>Customer Dashboard</h1>
                 <div class="user-meta">
                     <span class="user-name">Welcome, {{ user.name }}</span>
-                    <span class="user-role">{{ user.role.value | capitalize }}</span>
+                    <span class="user-role">{{ user.role | capitalize }}</span>
                 </div>
             </div>
             <a href="/logout" class="logout-btn">
@@ -26,20 +26,20 @@
             <h2 class="section-title">
                 <i class="fas fa-plus-circle"></i> Create New Ticket
             </h2>
-            <form class="ticket-form">
+            <form class="ticket-form" method="post" action="/create_ticket">
                 <div class="form-group">
                     <label for="subject">Subject</label>
-                    <input type="text" id="subject" class="form-control" placeholder="Briefly describe your issue">
+                    <input type="text" id="subject" name="subject" class="form-control" placeholder="Briefly describe your issue" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="description">Description</label>
-                    <textarea id="description" class="form-control" placeholder="Please provide detailed information about your issue"></textarea>
+                    <textarea id="description" name="description" class="form-control" placeholder="Please provide detailed information about your issue" required></textarea>
                 </div>
                 
                 <div class="form-group">
                     <label for="priority">Priority</label>
-                    <select id="priority" class="form-control">
+                    <select id="priority" name="priority" class="form-control" required>
                         <option value="low">Low</option>
                         <option value="medium" selected>Medium</option>
                         <option value="high">High</option>
@@ -59,20 +59,20 @@
                 <h2 class="section-title">
                     <i class="fas fa-ticket-alt"></i> Your Tickets
                 </h2>
-                <div class="ticket-filters">
-                    <select class="filter-select">
-                        <option>All Statuses</option>
-                        <option>Open</option>
-                        <option>In Progress</option>
-                        <option>Closed</option>
+                <form method="get" action="/customer_dashboard" class="ticket-filters">
+                    <select name="status" class="filter-select" onchange="this.form.submit()">
+                        <option value="">All Statuses</option>
+                        <option value="open" {% if request.query_params.get('status') == 'open' %}selected{% endif %}>Open</option>
+                        <option value="in_progress" {% if request.query_params.get('status') == 'in_progress' %}selected{% endif %}>In Progress</option>
+                        <option value="closed" {% if request.query_params.get('status') == 'closed' %}selected{% endif %}>Closed</option>
                     </select>
-                    <select class="filter-select">
-                        <option>All Priorities</option>
-                        <option>Low</option>
-                        <option>Medium</option>
-                        <option>High</option>
+                    <select name="priority" class="filter-select" onchange="this.form.submit()">
+                        <option value="">All Priorities</option>
+                        <option value="low" {% if request.query_params.get('priority') == 'low' %}selected{% endif %}>Low</option>
+                        <option value="medium" {% if request.query_params.get('priority') == 'medium' %}selected{% endif %}>Medium</option>
+                        <option value="high" {% if request.query_params.get('priority') == 'high' %}selected{% endif %}>High</option>
                     </select>
-                </div>
+                </form>
             </div>
 
             {% for ticket in tickets %}
@@ -106,8 +106,8 @@
                 </div>
                 {% endfor %}
                 
-                <form class="response-form">
-                    <textarea class="form-control" placeholder="Add your response..."></textarea>
+                <form method="post" action="/add_ticket_response/{{ ticket.id }}/responses" class="response-form">
+                    <textarea name="message" class="form-control" placeholder="Add your response..." required></textarea>
                     <button type="submit" class="btn btn-secondary">
                         <i class="fas fa-reply"></i> Submit Response
                     </button>
