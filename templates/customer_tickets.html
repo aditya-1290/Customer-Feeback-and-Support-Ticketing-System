@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Customer Tickets | Premium Support</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="{{ url_for('static', path='/customer_dashboard.css') }}" />
+</head>
+<body>
+    <div class="dashboard">
+        <header class="dashboard-header">
+            <div class="user-greeting">
+                <h1>All Tickets - Customer View</h1>
+                <div class="user-meta">
+                    <span class="user-name">Welcome, {{ user.name }}</span>
+                    <span class="user-role">{{ user.role.value | capitalize }}</span>
+                </div>
+            </div>
+            <a href="/logout" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </header>
+
+        <section class="ticket-list">
+            <div class="list-header">
+                <h2 class="section-title">
+                    <i class="fas fa-ticket-alt"></i> Your Tickets
+                </h2>
+                <a href="/customer_dashboard?user_email={{ user.email }}" class="btn btn-secondary">Back to Dashboard</a>
+            </div>
+
+            {% for ticket in tickets %}
+            <div class="ticket-card">
+                <div class="ticket-header">
+                    <h3 class="ticket-title">{{ ticket.subject }}</h3>
+                    <div class="ticket-meta">
+                        <span class="status-badge status-{{ ticket.status.value | replace('_', '-') }}">{{ ticket.status.value | capitalize }}</span>
+                        <span class="priority-badge priority-{{ ticket.priority | lower }}">{{ ticket.priority | capitalize }}</span>
+                        <span class="ticket-date">{{ ticket.created_at.strftime('%d/%m/%Y') }}</span>
+                    </div>
+                </div>
+
+                <div class="ticket-body">
+                    {{ ticket.description }}
+                </div>
+
+                <h4 class="responses-title">
+                    <i class="fas fa-comments"></i> Responses ({{ ticket.responses | length }})
+                </h4>
+
+                {% for response in ticket.responses %}
+                <div class="response response-{{ 'support' if response.responder.role == 'support_agent' else 'user' }}">
+                    <div class="response-meta">
+                        <span class="responder">{{ 'Support Agent' if response.responder.role == 'support_agent' else 'You' }}</span>
+                        <span class="response-date">{{ response.timestamp.strftime('%d/%m/%Y %I:%M %p') }}</span>
+                    </div>
+                    <div class="response-content">
+                        {{ response.message }}
+                    </div>
+                </div>
+                {% endfor %}
+
+                <form method="post" action="/add_ticket_response/{{ ticket.id }}/responses" class="response-form">
+                    <textarea name="message" class="form-control" placeholder="Add your response..." required></textarea>
+                    <button type="submit" class="btn btn-secondary">
+                        <i class="fas fa-reply"></i> Submit Response
+                    </button>
+                </form>
+            </div>
+            {% endfor %}
+        </section>
+    </div>
+</body>
+</html>

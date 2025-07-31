@@ -1,0 +1,426 @@
+:root {
+    --primary: #4361ee;
+    --primary-dark: #3a56d4;
+    --secondary: #f72585;
+    --success: #4cc9f0;
+    --warning: #f8961e;
+    --danger: #ef233c;
+    --light: #f8f9fa;
+    --dark: #212529;
+    --gray: #6c757d;
+    --border-radius: 8px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    background-color: #f5f7ff;
+    color: var(--dark);
+    line-height: 1.6;
+}
+
+.dashboard {
+    max-width: auto;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Header Styles */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.user-greeting h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--dark);
+}
+
+.user-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-name {
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.user-role {
+    background: var(--secondary);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--danger);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.logout-btn:hover {
+    background: #d00040;
+    transform: translateY(-1px);
+}
+
+/* Ticket List */
+.ticket-list {
+    background: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.4rem;
+    color: var(--dark);
+}
+
+.ticket-filters {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.filter-select {
+    padding: 0.5rem 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+    background: white;
+    cursor: pointer;
+}
+
+/* Ticket Card */
+.ticket-card {
+    border: 1px solid #f0f0f0;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: var(--transition);
+}
+
+.ticket-card:hover {
+    border-color: #e0e0e0;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+}
+
+.ticket-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.ticket-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--dark);
+    flex: 1;
+    min-width: 200px;
+}
+
+.ticket-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.status-select {
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--border-radius);
+    border: 1px solid #e0e0e0;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.status-select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.customer-info {
+    font-size: 0.9rem;
+    color: var(--gray);
+}
+
+.priority-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.priority-low {
+    background: #d3f9d8;
+    color: #2b8a3e;
+}
+
+.priority-medium {
+    background: #fff3bf;
+    color: #e67700;
+}
+
+.priority-high {
+    background: #ffc9c9;
+    color: #c92a2a;
+}
+
+.ticket-date {
+    font-size: 0.85rem;
+    color: var(--gray);
+}
+
+.ticket-body {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #f0f0f0;
+    color: var(--dark);
+    line-height: 1.7;
+}
+
+/* Responses */
+.responses-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    color: var(--dark);
+}
+
+.response {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: var(--border-radius);
+    position: relative;
+    background: #f9f9f9;
+}
+
+.response::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--primary);
+    border-radius: 4px 0 0 4px;
+}
+
+.response-support {
+    background: #f5f7ff;
+}
+
+.response-user {
+    background: #f8f9fa;
+}
+
+.response-user::before {
+    background: var(--gray);
+}
+
+.response-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.responder {
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.response-support .responder {
+    color: var(--primary);
+}
+
+.response-date {
+    color: var(--gray);
+}
+
+.response-content {
+    color: var(--dark);
+    line-height: 1.7;
+}
+
+/* Response Form */
+.response-form {
+    margin-top: 1.5rem;
+}
+
+.response-form .form-control {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: var(--transition);
+    min-height: 100px;
+    margin-bottom: 1rem;
+    font-family: inherit;
+}
+
+.response-form .form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+}
+
+/* Buttons */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
+}
+
+/* New btn-secondary styles for support agent tickets page */
+.btn-secondary {
+    background: var(--primary);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    box-shadow: 0 2px 6px rgba(67, 97, 238, 0.3);
+}
+
+.btn-secondary:hover {
+    background: var(--primary-dark);
+    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.5);
+    transform: translateY(-1px);
+}
+
+/* See More and Back to Dashboard Buttons */
+.see-more-container {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+/* Status Badge */
+.status-badge {
+    padding: 0.3rem 0.75rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: capitalize;
+    color: white;
+    display: inline-block;
+    min-width: 70px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: var(--transition);
+}
+
+.status-open {
+    background-color: #28a745; /* green */
+}
+
+.status-pending {
+    background-color: #ffc107; /* yellow */
+    color: #212529;
+}
+
+.status-closed {
+    background-color: #dc3545; /* red */
+}
+
+.status-in-progress {
+    background-color: #17a2b8; /* blue */
+}
+
+/* Margin and spacing improvements */
+.list-header .btn-secondary {
+    margin-left: 1rem;
+}
+
+.response-form .btn-secondary {
+    margin-top: 0.5rem;
+    align-self: flex-start;
+}
+
+/* Optional subtle box shadow for badges */
+.status-badge:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
+}
+
+.see-more-container .btn {
+    background-color: var(--secondary);
+    color: white;
+    padding: 0.5rem 1.25rem;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    display: inline-block;
+}
+
+.see-more-container .btn:hover {
+    background-color: #686767;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(217, 4, 41, 0.3);
+}
