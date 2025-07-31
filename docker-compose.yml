@@ -1,6 +1,18 @@
 services:
+  app:
+    image: aditya1920/crm_app_aditya:latest  # Replace build: . with this
+    # Remove the 'build: .' line
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: mysql+pymysql://root:redhat@db:3306/crm_db
+    volumes:
+      - .:/app  # Optional: Remove if you don’t need live code reloading
+
   db:
-    image: mysql:8.0
+    image: mysql:8.0  # Keep or replace with your custom_mysql if applicable
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: redhat
@@ -9,17 +21,6 @@ services:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-
-  app:
-    build: .
-    depends_on:
-      - db
-    ports:
-      - "8000:8000"
-    environment:
-      DATABASE_URL: mysql+pymysql://root:redhat@db:3306/crm_db
-    volumes:
-      - .:/app
 
 volumes:
   mysql_data:
