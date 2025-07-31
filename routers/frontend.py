@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request, Form, Depends, status, Header
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from database import get_db
 import models
 from core import security
@@ -10,7 +10,7 @@ import logging
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
-logger = logging.getLogger("uvicorn.access")
+logger = logging.getLogger(__name__)
 
 @router.get("/", response_class=HTMLResponse)
 @router.get("/login", response_class=HTMLResponse)
@@ -36,10 +36,96 @@ def post_register(request: Request, name: str = Form(...), email: str = Form(...
 def post_login(request: Request, email: str = Form(...), password: str = Form(...), role: str = Form(...), db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.email == email).first()
     if not user or not security.verify_password(password, user.password_hash) or user.role.value != role:
-        return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid credentials or role"})
-    access_token = security.create_access_token(data={"sub": user.email, "role": user.role.value})
-    response = RedirectResponse(url="/dashboard", status_code=status.HTTP_302_FOUND)
-    response.set_cookie(key="access_token", value=access_token, httponly=True, secure=False, samesite="lax")
+        return templates.TemplateResponse(request, "login.html", {"request": request, "error": "Invalid credentials or role"})
+    # Redirect to dashboard with user_email as query parameter
+    response = RedirectResponse(url=f"/dashboard?user_email={user.email}", status_code=status.HTTP_302_FOUND)
+    return response
+
+@router.get("/dashboard", response_class=HTMLResponse)
+def get_dashboard(request: Request, db: Session = Depends(get_db), user_email: str = None):
+    if not user_email:
+        return RedirectResponse(url="/login")
+    user = db.query(models.User).filter(models.User.email == user_email).first()
+    if not user:
+        return RedirectResponse(url="/login")
+    user_role = user.role.value
+    if user_role == "customer":
+        return RedirectResponse(url=f"/customer_dashboard?user_email={user_email}")
+    elif user_role == "support_agent":
+        return RedirectResponse(url=f"/support_agent_dashboard?user_email={user_email}")
+    else:
+        return RedirectResponse(url="/login")
+
+@router.get("/customer_dashboard", response_class=HTMLResponse)
+def customer_dashboard(request: Request, db: Session = Depends(get_db), user_email: str = None):
+    if not user_email:
+        return RedirectResponse(url="/login")
+    user = db.query(models.User).filter(models.User.email == user_email).first()
+    if not user:
+        return RedirectResponse(url="/login")
+    logger.info("Customer Dashboard accessed by user: %s with role: %s", user.email, user.role.value)
+    tickets = db.query(models.Ticket).options(joinedload(models.Ticket.responses).joinedload(models.TicketResponse.responder)).filter(models.Ticket.user_id == user.id).order_by(models.Ticket.created_at.desc()).limit(3).all()
+    response = templates.TemplateResponse("customer_dashboard.html", {"request": request, "user": user, "tickets": tickets})
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+
+@router.get("/support_agent_dashboard", response_class=HTMLResponse)
+def support_agent_dashboard(request: Request, db: Session = Depends(get_db), user_email: str = None):
+    if not user_email:
+        return RedirectResponse(url="/login")
+    user = db.query(models.User).filter(models.User.email == user_email).first()
+    if not user:
+        return RedirectResponse(url="/login")
+    logger.info("Support Agent Dashboard accessed by user: %s with role: %s", user.email, user.role.value)
+    tickets = db.query(models.Ticket).options(joinedload(models.Ticket.responses).joinedload(models.TicketResponse.responder)).order_by(models.Ticket.created_at.desc()).limit(3).all()
+    response = templates.TemplateResponse("support_agent_dashboard.html", {"request": request, "user": user, "tickets": tickets})
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+
+@router.get("/customer_tickets", response_class=HTMLResponse)
+def customer_tickets(request: Request, db: Session = Depends(get_db), user_email: str = None):
+    if not user_email:
+        return RedirectResponse(url="/login")
+    user = db.query(models.User).filter(models.User.email == user_email).first()
+    if not user:
+        return RedirectResponse(url="/login")
+    tickets = db.query(models.Ticket).filter(models.Ticket.user_id == user.id).order_by(models.Ticket.created_at.desc()).all()
+    response = templates.TemplateResponse("customer_tickets.html", {"request": request, "user": user, "tickets": tickets})
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+
+@router.get("/support_agent_tickets", response_class=HTMLResponse)
+def support_agent_tickets(
+    request: Request,
+    db: Session = Depends(get_db),
+    user_email: str = None,
+    status: str = None,
+    priority: str = None,
+    customer_name: str = None
+):
+    if not user_email:
+        return RedirectResponse(url="/login")
+    user = db.query(models.User).filter(models.User.email == user_email).first()
+    if not user:
+        return RedirectResponse(url="/login")
+    query = db.query(models.Ticket).join(models.User, models.Ticket.user_id == models.User.id)
+    if status:
+        query = query.filter(models.Ticket.status == status)
+    if priority:
+        query = query.filter(models.Ticket.priority == priority)
+    if customer_name:
+        query = query.filter(models.User.name.ilike(f"%{customer_name}%"))
+    tickets = query.order_by(models.Ticket.created_at.desc()).all()
+    response = templates.TemplateResponse("support_agent_tickets.html", {"request": request, "user": user, "tickets": tickets})
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
     return response
 
 @router.get("/logout")
@@ -48,74 +134,10 @@ def logout():
     response = RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
     return response
 
-@router.get("/dashboard", response_class=HTMLResponse)
-def get_dashboard(request: Request, db: Session = Depends(get_db), authorization: str = Header(None)):
-    if not authorization or not authorization.startswith("Bearer "):
-        return RedirectResponse(url="/login")
-    token = authorization.removeprefix("Bearer ").strip()
-    payload = security.decode_access_token(token)
-    if not payload:
-        return RedirectResponse(url="/login")
-    user_role = payload.get("role")
-    if user_role == "customer":
-        return RedirectResponse(url="/customer_dashboard")
-    elif user_role == "support_agent":
-        return RedirectResponse(url="/support_agent_dashboard")
-    else:
-        return RedirectResponse(url="/login")
-
-@router.get("/customer_dashboard", response_class=HTMLResponse)
-def customer_dashboard(request: Request, db: Session = Depends(get_db)):
-    token = request.cookies.get("access_token")
-    if not token:
-        return RedirectResponse(url="/login")
-    payload = security.decode_access_token(token)
-    if not payload:
-        return RedirectResponse(url="/login")
-    user_email = payload.get("sub")
-    user_role = payload.get("role")
-    logger.info(f"Customer Dashboard accessed by user: {user_email} with role: {user_role}")
-    user = db.query(models.User).filter(models.User.email == user_email).first()
-    if not user:
-        return RedirectResponse(url="/login")
-    tickets = db.query(models.Ticket).filter(models.Ticket.user_id == user.id).order_by(models.Ticket.created_at.desc()).all()
-    response = templates.TemplateResponse("customer_dashboard.html", {"request": request, "user": user, "tickets": tickets})
-    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
-    response.headers["Pragma"] = "no-cache"
-    response.headers["Expires"] = "0"
-    return response
-
-@router.get("/support_agent_dashboard", response_class=HTMLResponse)
-def support_agent_dashboard(request: Request, db: Session = Depends(get_db)):
-    token = request.cookies.get("access_token")
-    if not token:
-        return RedirectResponse(url="/login")
-    payload = security.decode_access_token(token)
-    if not payload:
-        return RedirectResponse(url="/login")
-    user_email = payload.get("sub")
-    user_role = payload.get("role")
-    logger.info(f"Support Agent Dashboard accessed by user: {user_email} with role: {user_role}")
-    user = db.query(models.User).filter(models.User.email == user_email).first()
-    if not user:
-        return RedirectResponse(url="/login")
-    # For support agent, show all tickets (or you can filter assigned tickets if applicable)
-    tickets = db.query(models.Ticket).order_by(models.Ticket.created_at.desc()).all()
-    response = templates.TemplateResponse("support_agent_dashboard.html", {"request": request, "user": user, "tickets": tickets})
-    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
-    response.headers["Pragma"] = "no-cache"
-    response.headers["Expires"] = "0"
-    return response
-
 @router.get("/user_info")
-def user_info(db: Session = Depends(get_db), authorization: str = Header(None)):
-    if not authorization or not authorization.startswith("Bearer "):
+def user_info(db: Session = Depends(get_db), user_email: str = None):
+    if not user_email:
         return JSONResponse(status_code=401, content={"error": "Not authenticated"})
-    token = authorization.removeprefix("Bearer ").strip()
-    payload = security.decode_access_token(token)
-    if not payload:
-        return JSONResponse(status_code=401, content={"error": "Invalid token"})
-    user_email = payload.get("sub")
     user = db.query(models.User).filter(models.User.email == user_email).first()
     if not user:
         return JSONResponse(status_code=404, content={"error": "User not found"})

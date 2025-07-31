@@ -14,7 +14,7 @@
                 <h1>Customer Dashboard</h1>
                 <div class="user-meta">
                     <span class="user-name">Welcome, {{ user.name }}</span>
-                    <span class="user-role">{{ user.role | capitalize }}</span>
+                    <span class="user-role">{{ user.role.value | capitalize }}</span>
                 </div>
             </div>
             <a href="/logout" class="logout-btn">
@@ -27,6 +27,7 @@
                 <i class="fas fa-plus-circle"></i> Create New Ticket
             </h2>
             <form class="ticket-form" method="post" action="/create_ticket">
+                <input type="hidden" name="email" value="{{ user.email }}">
                 <div class="form-group">
                     <label for="subject">Subject</label>
                     <input type="text" id="subject" name="subject" class="form-control" placeholder="Briefly describe your issue" required>
@@ -59,20 +60,6 @@
                 <h2 class="section-title">
                     <i class="fas fa-ticket-alt"></i> Your Tickets
                 </h2>
-                <form method="get" action="/customer_dashboard" class="ticket-filters">
-                    <select name="status" class="filter-select" onchange="this.form.submit()">
-                        <option value="">All Statuses</option>
-                        <option value="open" {% if request.query_params.get('status') == 'open' %}selected{% endif %}>Open</option>
-                        <option value="in_progress" {% if request.query_params.get('status') == 'in_progress' %}selected{% endif %}>In Progress</option>
-                        <option value="closed" {% if request.query_params.get('status') == 'closed' %}selected{% endif %}>Closed</option>
-                    </select>
-                    <select name="priority" class="filter-select" onchange="this.form.submit()">
-                        <option value="">All Priorities</option>
-                        <option value="low" {% if request.query_params.get('priority') == 'low' %}selected{% endif %}>Low</option>
-                        <option value="medium" {% if request.query_params.get('priority') == 'medium' %}selected{% endif %}>Medium</option>
-                        <option value="high" {% if request.query_params.get('priority') == 'high' %}selected{% endif %}>High</option>
-                    </select>
-                </form>
             </div>
 
             {% for ticket in tickets %}
@@ -95,9 +82,9 @@
                 </h4>
                 
                 {% for response in ticket.responses %}
-                <div class="response response-{{ 'support' if response.responder.role == 'support_agent' else 'user' }}">
+                <div class="response response-{{ 'support' if response.responder.role.value == 'support_agent' else 'user' }}">
                     <div class="response-meta">
-                        <span class="responder">{{ 'Support Agent' if response.responder.role == 'support_agent' else 'You' }}</span>
+                        <span class="responder">{{ 'Support Agent' if response.responder.role.value == 'support_agent' else 'You' }}</span>
                         <span class="response-date">{{ response.timestamp.strftime('%d/%m/%Y %I:%M %p') }}</span>
                     </div>
                     <div class="response-content">
@@ -107,6 +94,7 @@
                 {% endfor %}
                 
                 <form method="post" action="/add_ticket_response/{{ ticket.id }}/responses" class="response-form">
+                    <input type="hidden" name="email" value="{{ user.email }}">
                     <textarea name="message" class="form-control" placeholder="Add your response..." required></textarea>
                     <button type="submit" class="btn btn-secondary">
                         <i class="fas fa-reply"></i> Submit Response
@@ -114,6 +102,9 @@
                 </form>
             </div>
             {% endfor %}
+            <div class="see-more-container">
+                <a href="/customer_tickets?user_email={{ user.email }}" class="btn btn-secondary">See More</a>
+            </div>
         </section>
     </div>
 </body>

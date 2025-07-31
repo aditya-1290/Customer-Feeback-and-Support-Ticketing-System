@@ -1,0 +1,139 @@
+background:{ var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
+}
+=======
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
+}
+
+/* New btn-secondary styles for support agent tickets page */
+.btn-secondary {
+    background: var(--primary);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    box-shadow: 0 2px 6px rgba(67, 97, 238, 0.3);
+}
+
+.btn-secondary:hover {
+    background: var(--primary-dark);
+    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.5);
+    transform: translateY(-1px);
+}
+>>>>>>> REPLACE
+<<<<<<< SEARCH
+/* See More and Back to Dashboard Buttons */
+.see-more-container {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.see-more-container .btn {
+    background-color: var(--secondary);
+    color: white;
+    padding: 0.5rem 1.25rem;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    display: inline-block;
+}
+
+.see-more-container .btn:hover {
+    background-color: #686767;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(217, 4, 41, 0.3);
+}
+=======
+/* See More and Back to Dashboard Buttons */
+.see-more-container {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+/* Status Badge */
+.status-badge {
+    padding: 0.3rem 0.75rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: capitalize;
+    color: white;
+    display: inline-block;
+    min-width: 70px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: var(--transition);
+}
+
+.status-open {
+    background-color: #28a745; /* green */
+}
+
+.status-pending {
+    background-color: #ffc107; /* yellow */
+    color: #212529;
+}
+
+.status-closed {
+    background-color: #dc3545; /* red */
+}
+
+.status-in-progress {
+    background-color: #17a2b8; /* blue */
+}
+
+/* Margin and spacing improvements */
+.list-header .btn-secondary {
+    margin-left: 1rem;
+}
+
+.response-form .btn-secondary {
+    margin-top: 0.5rem;
+    align-self: flex-start;
+}
+
+/* Optional subtle box shadow for badges */
+.status-badge:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
+}
+
+.see-more-container .btn {
+    background-color: var(--secondary);
+    color: white;
+    padding: 0.5rem 1.25rem;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    display: inline-block;
+}
+
+.see-more-container .btn:hover {
+    background-color: #686767;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(217, 4, 41, 0.3);
+}

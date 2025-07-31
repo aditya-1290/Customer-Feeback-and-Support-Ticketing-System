@@ -6,3 +6,4 @@ tests/
 .idea/
 .vscode/
 *.log
+*.db

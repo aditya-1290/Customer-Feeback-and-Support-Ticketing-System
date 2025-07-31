@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Support Agent Dashboard | Premium Support</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel ="stylesheet" href="{{ url_for('static', path='/support_agent_dashboard.css') }}">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Customer Tickets | Premium Support</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="{{ url_for('static', path='/customer_dashboard.css') }}" />
 </head>
 <body>
     <div class="dashboard">
         <header class="dashboard-header">
             <div class="user-greeting">
-                <h1>Support Agent Dashboard</h1>
+                <h1>All Tickets - Customer View</h1>
                 <div class="user-meta">
                     <span class="user-name">Welcome, {{ user.name }}</span>
-            <span class="user-role">{{ user.role.value | capitalize }}</span>
+                    <span class="user-role">{{ user.role.value | capitalize }}</span>
                 </div>
             </div>
             <a href="/logout" class="logout-btn">
@@ -25,8 +25,9 @@
         <section class="ticket-list">
             <div class="list-header">
                 <h2 class="section-title">
-                    <i class="fas fa-ticket-alt"></i> All Tickets
+                    <i class="fas fa-ticket-alt"></i> Your Tickets
                 </h2>
+                <a href="/customer_dashboard?user_email={{ user.email }}" class="btn btn-secondary">Back to Dashboard</a>
             </div>
 
             {% for ticket in tickets %}
@@ -34,35 +35,24 @@
                 <div class="ticket-header">
                     <h3 class="ticket-title">{{ ticket.subject }}</h3>
                     <div class="ticket-meta">
-                        <form method="post" action="/update_ticket_status/{{ ticket.id }}" class="status-form">
-                            <input type="hidden" name="email" value="{{ user.email }}">
-                            <select name="status" class="status-select" onchange="this.form.submit()">
-                                <option value="open" {% if ticket.status.value == 'open' %}selected{% endif %}>Open</option>
-                                <option value="in_progress" {% if ticket.status.value == 'in_progress' %}selected{% endif %}>In Progress</option>
-                                <option value="closed" {% if ticket.status.value == 'closed' %}selected{% endif %}>Closed</option>
-                            </select>
-                        </form>
+                        <span class="status-badge status-{{ ticket.status.value | replace('_', '-') }}">{{ ticket.status.value | capitalize }}</span>
                         <span class="priority-badge priority-{{ ticket.priority | lower }}">{{ ticket.priority | capitalize }}</span>
                         <span class="ticket-date">{{ ticket.created_at.strftime('%d/%m/%Y') }}</span>
                     </div>
                 </div>
-                
-                <div class="customer-info">
-                    Customer: {{ ticket.user.name }} (ID: {{ ticket.user.id }})
-                </div>
-                
+
                 <div class="ticket-body">
                     {{ ticket.description }}
                 </div>
-                
+
                 <h4 class="responses-title">
                     <i class="fas fa-comments"></i> Responses ({{ ticket.responses | length }})
                 </h4>
-                
+
                 {% for response in ticket.responses %}
-                <div class="response response-{{ 'support' if response.responder.role.value == 'support_agent' else 'user' }}">
+                <div class="response response-{{ 'support' if response.responder.role == 'support_agent' else 'user' }}">
                     <div class="response-meta">
-                        <span class="responder">{{ 'Support Agent' if response.responder.role.value == 'support_agent' else 'Customer' }}</span>
+                        <span class="responder">{{ 'Support Agent' if response.responder.role == 'support_agent' else 'You' }}</span>
                         <span class="response-date">{{ response.timestamp.strftime('%d/%m/%Y %I:%M %p') }}</span>
                     </div>
                     <div class="response-content">
@@ -70,19 +60,15 @@
                     </div>
                 </div>
                 {% endfor %}
-                
+
                 <form method="post" action="/add_ticket_response/{{ ticket.id }}/responses" class="response-form">
-                    <input type="hidden" name="email" value="{{ user.email }}">
                     <textarea name="message" class="form-control" placeholder="Add your response..." required></textarea>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-secondary">
                         <i class="fas fa-reply"></i> Submit Response
                     </button>
                 </form>
             </div>
             {% endfor %}
-            <div class="see-more-container">
-                <a href="/support_agent_tickets?user_email={{ user.email }}" class="btn btn-secondary">See More</a>
-            </div>
         </section>
     </div>
 </body>
