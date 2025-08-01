@@ -5,14 +5,14 @@ services:
     depends_on:
       - db
     ports:
-      - "8000:8000"
+      - "10000:10000"
     environment:
       DATABASE_URL: mysql+pymysql://root:redhat@db:3306/crm_db
     volumes:
-      - .:/app  # Optional: Remove if you don’t need live code reloading
+      - .:/app  # Optional: Remove if we don’t need live code reloading
 
   db:
-    image: mysql:8.0  # Keep or replace with your custom_mysql if applicable
+    image: mysql:8.0  # we can replace with our custom_mysql if applicable
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: redhat

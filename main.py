@@ -7,8 +7,8 @@ import os
 
 app = FastAPI(title="Customer Feedback and Support Ticketing System")
 
-# Create database tables
-Base.metadata.create_all(bind=engine)
+# Create database tables     
+Base.metadata.create_all(bind=engine)  
    
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
