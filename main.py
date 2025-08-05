@@ -9,6 +9,7 @@ app = FastAPI(title="Customer Feedback and Support Ticketing System")
 
 # Create database tables     
 Base.metadata.create_all(bind=engine)  
+print("Database tables created successfully.")
    
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
