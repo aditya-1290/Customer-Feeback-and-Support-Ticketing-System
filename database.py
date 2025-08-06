@@ -7,7 +7,7 @@ import os
 # Use environment variables for flexible deployment
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql://postgres:redhat@localhost:5432/crm_db"
+    "postgresql://postgres:redhat@localhost.on.render.com:5432/crm_db"
 )
 
 # For Docker deployment, use the service name
