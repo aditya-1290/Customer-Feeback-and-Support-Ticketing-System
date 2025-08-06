@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routers import auth, tickets, frontend
+from routers import tickets, frontend
 from database import engine, Base
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -21,4 +21,4 @@ templates = Jinja2Templates(directory=templates_dir)
 # Include routers
 app.include_router(frontend.router)
 # app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
-app.include_router(tickets.router, prefix="", tags=["Tickets"])                                      
+app.include_router(tickets.router, prefix="", tags=["Tickets"])
