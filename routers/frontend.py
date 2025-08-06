@@ -28,6 +28,7 @@ def post_register(request: Request, name: str = Form(...), email: str = Form(...
         return templates.TemplateResponse(request, "register.html", {"request": request, "error": "Email already registered"})
     hashed_password = security.get_password_hash(password)
     new_user = models.User(name=name, email=email, password_hash=hashed_password, role=role)
+    print(new_user)
     db.add(new_user)
     db.commit()
     return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
@@ -35,6 +36,7 @@ def post_register(request: Request, name: str = Form(...), email: str = Form(...
 @router.post("/login")
 def post_login(request: Request, email: str = Form(...), password: str = Form(...), role: str = Form(...), db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.email == email).first()
+    print(type(user))
     if not user or not security.verify_password(password, user.password_hash) or user.role.value != role:
         return templates.TemplateResponse(request, "login.html", {"request": request, "error": "Invalid credentials or role"})
     # Redirect to dashboard with user_email as query parameter

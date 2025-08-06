@@ -8,7 +8,6 @@ from core.security import verify_password
 from fastapi.responses import RedirectResponse
 from fastapi import Request, Form, Query
 
-
 router = APIRouter()
 
 async def get_current_user(email: str = Form(None), email_query: str = Query(None), db: Session = Depends(get_db)):
@@ -89,11 +88,6 @@ def add_ticket_response(
         else:
             redirect_url = f"/support_agent_dashboard?user_email={email}"
         return RedirectResponse(url=redirect_url, status_code=303)
-
-from fastapi import Form
-
-from fastapi.responses import RedirectResponse
-from fastapi import Form, Request
 
 @router.post("/update_ticket_status/{ticket_id}")
 def update_ticket_status(

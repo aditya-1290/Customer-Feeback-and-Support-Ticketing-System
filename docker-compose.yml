@@ -5,9 +5,9 @@ services:
     depends_on:
       - db
     ports:
-      - "8000:8000"
+      - "10000:10000"
     environment:
-      DATABASE_URL: mysql+pymysql://root:redhat@db:3306/crm_db
+      DATABASE_URL: mysql+pymysql://root:redhat@db:3307/crm_db
     volumes:
       - .:/app  # Optional: Remove if we don’t need live code reloading
 
