@@ -6,14 +6,14 @@ from fastapi.templating import Jinja2Templates
 import os
 
 app = FastAPI(title="Customer Feedback and Support Ticketing System")
-
+ 
 # Create database tables     
 Base.metadata.create_all(bind=engine)  
 print("Database tables created successfully.")
-   
+                                                                                      
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
-
+                                                        
 # Setup templates directory with absolute path
 templates_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
 templates = Jinja2Templates(directory=templates_dir)

@@ -3,8 +3,13 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 
-# Database URL - replace with your own MySQL credentials or use environment variables
-DATABASE_URL = os.getenv("DATABASE_URL", "mysql+pymysql://root:redhat@localhost:3306/crm_db")
+# Database URL configuration for different environments
+# For local development without Docker
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:redhat@localhost:5432/crm_db")
+
+# Fallback to SQLite if PostgreSQL is not available
+if os.getenv("USE_SQLITE", "false").lower() == "true":
+    DATABASE_URL = "sqlite:///./test.db"
 
 engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 

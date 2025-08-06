@@ -7,20 +7,21 @@ services:
     ports:
       - "10000:10000"
     environment:
-      DATABASE_URL: mysql+pymysql://root:redhat@db:3307/crm_db
+      DATABASE_URL: postgresql://postgres:redhat@db:5432/crm_db
     volumes:
-      - .:/app  # Optional: Remove if we don’t need live code reloading
+      - .:/app  # Optional: Remove if we don't need live code reloading
 
   db:
-    image: mysql:8.0  # we can replace with our custom_mysql if applicable
+    image: postgres:17.5  # Fixed: Use postgres instead of postgresql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: redhat
-      MYSQL_DATABASE: crm_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: redhat
+      POSTGRES_DB: crm_db
     ports:
-      - "3307:3306"
+      - "5432:5432"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
 
 volumes:
-  mysql_data:
+  postgres_data:
