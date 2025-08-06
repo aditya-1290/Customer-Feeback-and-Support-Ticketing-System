@@ -3,21 +3,12 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 
-# PostgreSQL configuration for deployment
-# Use environment variables for flexible deployment
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql://postgres:redhat@localhost.on.render.com:5432/crm_db"
-)
+# Simplified configuration - only use Render's DATABASE_URL
+DATABASE_URL = os.getenv("DATABASE_URL", " postgresql://postgres1:redhat//dpg-d29kdlqdbo4c73bl1b1g-a:5432/crm_db_yyxp")
 
-# For Docker deployment, use the service name
-# DATABASE_URL = os.getenv(
-#     "DATABASE_URL",
-#     "postgresql://postgres:redhat@db:5432/crm_db"
-# )
-
-# For Render deployment, use the provided DATABASE_URL
-# DATABASE_URL = os.getenv("DATABASE_URL")
+# Ensure proper connection string format
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 engine = create_engine(
     DATABASE_URL,
@@ -30,7 +21,6 @@ engine = create_engine(
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
-# Dependency to get DB session
 def get_db():
     db = SessionLocal()
     try:
