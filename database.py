@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 import os
 
 # Simplified configuration - only use Render's DATABASE_URL
-DATABASE_URL = os.getenv("DATABASE_URL", " postgresql://postgres1:redhat//dpg-d29kdlqdbo4c73bl1b1g-a:5432/crm_db_yyxp")
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres1:R0M8YYPOiRZC1A7kOA4HahzVlT1DwAha@dpg-d29kdlqdbo4c73bl1b1g-a/crm_db_yyxp")
 
 # Ensure proper connection string format
 if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
